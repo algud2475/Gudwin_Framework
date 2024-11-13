@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.github.algud2475</groupId>
+        <artifactId>Gudwin_Framework</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>JUnit5</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <selenide.version>7.5.1</selenide.version>
+        <junit-jupiter.version>5.11.3</junit-jupiter.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.algud2475</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codeborne</groupId>
+            <artifactId>selenide</artifactId>
+            <version>${selenide.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <!-- <version>${junit-jupiter.version}</version> -->
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-junit5</artifactId>
+            <!-- <version>${allure.version}</version> -->
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-selenide</artifactId>
+            <!-- <version>${allure.version}</version> -->
+        </dependency>
+    </dependencies>
+
+</project>

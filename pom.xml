@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.github.algud2475</groupId>
+    <artifactId>Gudwin_Framework</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+    <name>Gudwin_Framework</name>
+    <description>Project for work and interview</description>
+    <url>https://github.com/algud2475/Gudwin_Framework</url>
+    <modules>
+        <module>core</module>
+        <module>TestNG</module>
+        <module>JUnit5</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+
+        <encoding.type>UTF-8</encoding.type>
+        <project.build.sourceEncoding>${encoding.type}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${encoding.type}</project.reporting.outputEncoding>
+        <file.encoding>${encoding.type}</file.encoding>
+
+        <lombok.version>1.18.34</lombok.version>
+        <jackson-databind.version>2.18.0</jackson-databind.version>
+        <!-- Для совместимости лучше скачивать последний тестовый allure-проект с сайта https://allurereport.org/start/
+        оттуда берутся версии:
+        * allure
+        * aspectj
+        * junit
+        * maven-compiler-plugin
+        * maven-surefire-plugin
+        * allure-maven
+        -->
+        <allure.maven.version>2.12.0</allure.maven.version>
+        <allure.version>2.29.0</allure.version>
+        <aspectj.version>1.9.22.1</aspectj.version>
+        <owner.version>1.0.12</owner.version>
+        <slf4j-simple.version>2.0.16</slf4j-simple.version>
+        <awaitility.version>4.2.2</awaitility.version>
+        <rest-assured.version>5.5.0</rest-assured.version>
+        <!-- Версия взята из allure-junit-platform-2.29.0.pom для совместимости -->
+        <junit-jupiter.version>5.10.3</junit-jupiter.version>
+    </properties>
+
+    <dependencyManagement>
+        <!-- Выставляем одну версию аллюра на проект -->
+        <dependencies>
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-bom</artifactId>
+                <version>${allure.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Выставляем одну версию junit на проект, т.к. тот же allure-junit тянет за собой библиотеки -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
+        </dependency>
+        <!--dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-csv</artifactId>
+            <version>2.14.2</version>
+        </dependency-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <!-->Область видимости</-->
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.aeonbits.owner</groupId>
+            <artifactId>owner</artifactId>
+            <version>${owner.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j-simple.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-java-commons</artifactId>
+            <version>${allure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
+        </dependency>
+        <!-- Exclude или dependencyManagement ? -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Версия компайл плагина, совместимая с версией аллюр плагина -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <encoding>${encoding.type}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                    </argLine>
+                    <failIfNoTests>true</failIfNoTests>
+                    <!-- true - продолжить тестирование, если один из ТК завершился с ошибкой/упал -->
+                    <testFailureIgnore>true</testFailureIgnore>
+                    <!-- Можно изменить фильтр по-умолчанию, отвечающий за название тестовых классов,
+                    которые будут запущены во время тестов. Аналогично с excludes -->
+                    <!--includes>
+                        <include>**/*Test.java</include>
+                    </includes-->
+                    <!-- Передача плагину через командную строку неких параметров, например
+                     -Xmx1024m - количество ОЗУ мб, выделяемое JVM при компиляции и прогоне тестов -->
+                    <argLine>
+                        -Xmx1024m
+                        -Dfile.encoding=${encoding.type}
+                        <!-- Есть 3 варинта задания параметров:
+                            1) argLine
+                            2) systemPropertyVariables
+                            3) properties / property / name + value (см. пример ниже)
+                        -->
+                        <!--
+                        -Dallure.results.directory=${project.build.directory}/allure-results
+                        -->
+                    </argLine>
+                    <systemPropertyVariables>
+                        <!-- Задание директории, куда буду формироваться результаты и откуда они браться для формирования отчёта.
+                         Указываем папку в target, чтобы mav clean чистил нам алюровский "мусор"  -->
+                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                    </systemPropertyVariables>
+                    <!--
+                    <properties>
+                        <property>
+                            <name>listener</name>
+                            <value></value>
+                        </property>
+                    </properties>
+                    -->
+                </configuration>
+                <dependencies>
+                    <!-- aspectj нужен чтобы разделять на Шаги и они отображались в Allure отчёте -->
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!-- Отвечает за формирование сайта Allure отчёта -->
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>${allure.maven.version}</version>
+                <configuration>
+                    <reportVersion>${allure.version}</reportVersion>
+                    <serveHost>127.0.0.1</serveHost>
+                    <!--  можно не указывать, т.к. считывает из системной переменной allure.results.directory -->
+                    <!--resultsDirectory>${basedir}/allure-results</resultsDirectory-->
+                    <reportDirectory>${project.build.directory}/allure-reports</reportDirectory>
+                </configuration>
+                <!-- Для автоматичечского запуска плагина следует настроить следующее -->
+                <executions>
+                    <execution>
+                        <!-- фаза сборки maven -->
+                        <phase>package</phase>
+                        <goals>
+                            <!-- цель плагина allure, где report - формирование отчёта, serve - запуск браузера с отчетом -->
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+
+</project>
