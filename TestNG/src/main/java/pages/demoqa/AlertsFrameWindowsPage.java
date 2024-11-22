@@ -1,13 +1,12 @@
 package pages.demoqa;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import pages.BasePage;
 
 public class AlertsFrameWindowsPage extends BasePage {
 
-    private SideBar sideBar = new SideBar();
+    private SideBar sideBar = pageManager.getSideBar();
     @FindBy(xpath = "//span[contains(text(), 'Alerts')]//parent::*")
     private WebElement buttonAlerts;
     @FindBy(xpath = "//span[contains(text(), 'Frames') and not(contains(text(), 'Nested'))]//parent::li")
@@ -19,13 +18,20 @@ public class AlertsFrameWindowsPage extends BasePage {
         return sideBar;
     }
 
+    /**
+     * Метод для клика по кнопке в боковом меню с последующим переходом на страницу AlertsPage в текущей вкладке
+     *
+     * @return экземпляр AlertsPage
+     */
+    @Deprecated(since =  "Боковое меню вынесено в отдельный класс")
     public AlertsPage goToAlerts() {
         clickElement(buttonAlerts);
-        return new AlertsPage();
+        return pageManager.getAlertsPage();
     }
 
+    @Deprecated(since =  "Боковое меню вынесено в отдельный класс")
     public FramesPage goToFrames() {
         clickElement(buttonFrames);
-        return new FramesPage();
+        return pageManager.getFramesPage();
     }
 }

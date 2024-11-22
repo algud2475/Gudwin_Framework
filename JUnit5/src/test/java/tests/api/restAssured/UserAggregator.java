@@ -1,4 +1,4 @@
-package tests.API.restAssured;
+package tests.api.restAssured;
 
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.aggregator.ArgumentsAccessor;

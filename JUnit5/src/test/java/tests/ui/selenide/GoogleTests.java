@@ -1,4 +1,4 @@
-package tests.UI.selenide;
+package tests.ui.selenide;
 
 import browser.BrowserActions;
 import io.qameta.allure.*;

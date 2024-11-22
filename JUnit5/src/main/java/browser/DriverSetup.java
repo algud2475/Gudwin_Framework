@@ -1,7 +1,6 @@
 package browser;
 
 import com.codeborne.selenide.Configuration;
-import config.Props;
 import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogType;
@@ -11,11 +10,13 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import java.time.Duration;
 import java.util.logging.Level;
 
+import static config.PropsJUnit.propsWeb;
+
 /**
  * Класс настройки веб-драйверва
  */
 public abstract class DriverSetup {
-    protected static Props props = Props.props;
+
     private static ChromeOptions options = new ChromeOptions();
     protected static DesiredCapabilities capabilities = new DesiredCapabilities();
     private static LoggingPreferences loggingPreferences = new LoggingPreferences();
@@ -27,23 +28,18 @@ public abstract class DriverSetup {
         loggingPreferences.enable(LogType.BROWSER, Level.ALL);
         loggingPreferences.enable(LogType.PERFORMANCE, Level.ALL);
 
-        //System.setProperty("webdriver.chrome.driver", props.driverPath() + props.driverVersion());
+        //System.setProperty("webdriver.chrome.driver", propsWeb.driverPath() + propsWeb.driverVersion());
 
         options.addArguments(
                 "enable-automation",
                 "start-maximized"
                 );
 
-        options.setCapability("browserName", "chrome");
-        //options.setCapability("browserVersion", props.driverVersion());
+        //options.setCapability("browserVersion", propsWeb.driverVersion());
 
         options.setPageLoadStrategy(PageLoadStrategy.EAGER);
-        //options.setPageLoadTimeout(Duration.of(40, ChronoUnit.SECONDS));
         options.setPageLoadTimeout(Duration.ofSeconds(40)); //по-умолчанию - 30с
-        //options.setScriptTimeout(Duration.ofSeconds(5)); //по-умолчанию - 30с
-        //options.setImplicitWaitTimeout(Duration.of(30, ChronoUnit.SECONDS));
-        //options.setImplicitWaitTimeout(Duration.ofSeconds(30));
-
+        options.setScriptTimeout(Duration.ofSeconds(30)); //по-умолчанию - 30с
 
         addOptions();
 
@@ -60,7 +56,7 @@ public abstract class DriverSetup {
     }
 
     private static void addOptions() {
-        String chromeOptionsProps = props.chromeOptionsJUnit();
+        String chromeOptionsProps = propsWeb.chromeOptions();
         if (chromeOptionsProps != null) {
             String[] chromeOptions = chromeOptionsProps.split(",");
             for (String option : chromeOptions) {

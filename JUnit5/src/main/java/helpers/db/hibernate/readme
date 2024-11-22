@@ -1,0 +1,7 @@
+Для работы с БД возможно использование сущностей (entity) посредством
+hibernate-hikaricp
+javax.persistance.*
+
+hibernate даёт нам возможность общаться с БД через модельные классы
+
+В test/resources/META-INF/persistence.xml описываем какие сущности подходят к нашей БД

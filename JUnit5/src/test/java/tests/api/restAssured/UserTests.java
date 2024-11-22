@@ -1,4 +1,4 @@
-package tests.API.restAssured;
+package tests.api.restAssured;
 
 import helpers.CustomAssertions;
 import helpers.Specifications;

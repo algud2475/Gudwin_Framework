@@ -55,6 +55,7 @@ public class AlertsPage extends BasePage {
         return this;
     }
 
+    @Step("Проверка, что страница содержит сообщение: {text}")
     public AlertsPage checkSentTextLabelPrompt(String text) {
         CustomAssertions.assertTrue(labelPrompt.getText().contains(text),
                 "На странице не появилось сообщение, содержащее: " + text);

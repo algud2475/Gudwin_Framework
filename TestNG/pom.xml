@@ -14,7 +14,6 @@
 
     <properties>
         <testng.version>7.10.2</testng.version>
-        <postgresql.version>42.7.4</postgresql.version>
         <amqp-client.rabbitmq.version>5.22.0</amqp-client.rabbitmq.version>
         <cucumber.version>7.20.0</cucumber.version>
         <selenium.version>4.25.0</selenium.version>
@@ -30,11 +29,6 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgresql.version}</version>
         </dependency>
         <dependency>
             <groupId>com.rabbitmq</groupId>

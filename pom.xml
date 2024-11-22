@@ -46,6 +46,7 @@
         <rest-assured.version>5.5.0</rest-assured.version>
         <!-- Версия взята из allure-junit-platform-2.29.0.pom для совместимости -->
         <junit-jupiter.version>5.10.3</junit-jupiter.version>
+        <postgresql.version>42.7.4</postgresql.version>
     </properties>
 
     <dependencyManagement>
@@ -112,6 +113,17 @@
             <artifactId>rest-assured</artifactId>
             <version>${rest-assured.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.12.0</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- Exclude или dependencyManagement ? -->
     </dependencies>
 
@@ -160,14 +172,14 @@
                     </argLine>
                     <systemPropertyVariables>
                         <!-- Задание директории, куда буду формироваться результаты и откуда они браться для формирования отчёта.
-                         Указываем папку в target, чтобы mav clean чистил нам алюровский "мусор"  -->
+                         Указываем папку в target, чтобы mvn clean чистил нам алюровский "мусор"  -->
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
                     </systemPropertyVariables>
                     <!--
                     <properties>
                         <property>
                             <name>listener</name>
-                            <value></value>
+                            <value>io.qameta.allure.junit4.AllureJunit4</value>
                         </property>
                     </properties>
                     -->

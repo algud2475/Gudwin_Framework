@@ -12,9 +12,7 @@ public class TestSetup {
 
     @BeforeTest
     public void beforeTest() {
-        System.out.println("BeforeTest");
         DriverSetup.setup();
-        System.out.println("Options at TestSetup: " + DriverSetup.getOptions().toString());
     }
 
     /**

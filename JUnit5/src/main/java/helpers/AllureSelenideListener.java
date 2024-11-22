@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Level;
 
-import static config.Props.props;
+import static config.PropsJUnit.propsWeb;
 
 /**
  * Пользовательская реализация обработчика событий (listener)
@@ -31,7 +31,7 @@ import static config.Props.props;
 public class AllureSelenideListener implements LogEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(AllureSelenideListener.class);
     private boolean saveScreenshots;
-    private Boolean screenshotSteps = props.screenshotSteps();
+    private Boolean screenshotSteps = propsWeb.screenshotSteps();
     private boolean savePageHtml;
     private boolean includeSelenideLocatorsSteps;
     private final Map<LogType, Level> logTypesToSave;

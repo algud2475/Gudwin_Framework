@@ -15,10 +15,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.time.Duration;
 
+import static config.PropsTestNG.propsWeb;
+
 public class BasePage {
 
     protected DriverUtil driverUtil = DriverUtil.getInstance();
-    protected WebDriverWait wait = new WebDriverWait(driverUtil.getDriver(), Duration.ofSeconds(10L), Duration.ofSeconds(1L));  //вынести в проперти
+    protected PageManager pageManager = PageManager.getInstance();
+    protected WebDriverWait wait = new WebDriverWait(driverUtil.getDriver(), Duration.ofSeconds(propsWeb.explicitWaitTimeout()), Duration.ofSeconds(1L));
 
     public BasePage() {
         initializeFields(this);

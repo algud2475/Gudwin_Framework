@@ -1,5 +1,6 @@
 package pages.demoqa;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -23,30 +24,35 @@ public class SideBar extends BasePage {
     @FindBy(xpath = "//span[contains(text(), 'Frames') and not(contains(text(), 'Nested'))]//parent::li")
     private WebElement subitemFrames;
 
+    @Step("Раскрыть пункт 'Elements' и нажать на 'Web Tables'")
     public WebTablesPage itemElementsSubitemWebTables() {
         openItem(itemElements);
         clickElement(subitemWebTables);
         return new WebTablesPage();
     }
 
+    @Step("Раскрыть пункт 'Elements' и нажать на 'Links'")
     public LinksPage itemElementsSubitemLinks() {
         openItem(itemElements);
         clickElement(subitemLinks);
         return new LinksPage();
     }
 
+    @Step("Раскрыть пункт 'Alerts, Frame & Windows' и нажать на 'Browser windows'")
     public BrowserWindowsPage itemAlertsFrameWindowsSubitemBrowserWindows() {
         openItem(itemAlertsFrameWindows);
         clickElement(subitemBrowserWindows);
         return new BrowserWindowsPage();
     }
 
+    @Step("Раскрыть пункт 'Alerts, Frame & Windows' и нажать на 'Alerts'")
     public AlertsPage itemAlertsFrameWindowsSubitemAlerts() {
         openItem(itemAlertsFrameWindows);
         clickElement(subitemAlerts);
         return new AlertsPage();
     }
 
+    @Step("Раскрыть пункт 'Alerts, Frame & Windows' и нажать на 'Frames'")
     public FramesPage itemAlertsFrameWindowsSubitemFrames() {
         openItem(itemAlertsFrameWindows);
         clickElement(subitemFrames);

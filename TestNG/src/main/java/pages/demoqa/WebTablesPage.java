@@ -10,16 +10,13 @@ import pages.BasePage;
 import pojo.User;
 
 public class WebTablesPage extends BasePage {
-    //private static By locator = By.xpath("//div[@class=\"main-header\" and contains(text(),\"Web Tables\")]");
 
     @FindBy(xpath = "//button[@id='addNewRecordButton']")
     private WebElement buttonAdd;
     @FindByParametrized(xpath = "//div[contains(text(),'%s')]")
     private ParametrizedWebElement userData;
-    //private String locatorUserData = "//div[contains(text(),'%s')]";
     @FindByParametrized(xpath = "//div[contains(text(),'%s')]//parent::div//span[contains(@id, 'delete-record')]")
     private ParametrizedWebElement buttonDeleteUser;
-    //private String locatorButtonDeleteUser = locatorUserData + "//parent::div//span[contains(@id, \"delete-record\")]";
     @FindBy(xpath = "//form[@id='userForm']")
     private WebElement registrationForm;
     @FindBy(xpath = "//input[@id='firstName']")
@@ -37,11 +34,13 @@ public class WebTablesPage extends BasePage {
     @FindBy(xpath = "//button[@id='submit']")
     private WebElement buttonSubmit;
 
+    @Step("Нажать кнопку 'Add'")
     public WebTablesPage clickButtonAdd() {
         clickElement(buttonAdd);
         return this;
     }
 
+    @Step("Проверить, что форма регистрации пользователя открылась")
     public WebTablesPage checkRegistrationFormOpened() {
         CustomAssertions.assertTrue(registrationForm.isDisplayed(), "Форма регистрации пользователя не открылась");
         return this;
@@ -59,16 +58,19 @@ public class WebTablesPage extends BasePage {
         return this;
     }
 
+    @Step("Проверить, что пользователь присутствует в таблице")
     public WebTablesPage checkUserExist(String user) {
         CustomAssertions.assertTrue(userData.parameterize(user).isDisplayed(), "Заданный юзер не найден: " + user);
         return this;
     }
 
+    @Step("Проверить, что пользователь отсутствует в таблице")
     public WebTablesPage checkUserNotExist(String user) {
         CustomAssertions.assertTrue(userData.parameterize(user) == null, "Заданный юзер найден: " + user);
         return this;
     }
 
+    @Step("Удалить пользователя из таблицы")
     public WebTablesPage deleteUser(String user) {
         clickElement(buttonDeleteUser.parameterize(user));
         return this;
