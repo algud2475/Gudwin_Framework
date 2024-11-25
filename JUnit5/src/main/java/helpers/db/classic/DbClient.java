@@ -31,7 +31,7 @@ public class DbClient {
         try (Connection connection = dataSource.getConnection()) {
             LOGGER.info("Успешно создан клиент БД с заданными параметрами");
         } catch (SQLException e) {
-            Assertions.fail("Ошибка при создании клиента БД - проверьте параметры подключения");
+            Assertions.fail("Ошибка при создании клиента БД - проверьте параметры подключения", e);
         }
     }
 
@@ -41,7 +41,7 @@ public class DbClient {
             LOGGER.info("Отправка запроса: '{}'", query);
             return statement.executeUpdate(query);
         } catch (SQLException e) {
-            Assertions.fail("Не удалось выполнить SQL запрос");
+            Assertions.fail("Не удалось выполнить SQL запрос", e);
         }
         return 0;
     }
@@ -61,7 +61,7 @@ public class DbClient {
                     return (T) ResultSetProcessor.getListObjects(statement.executeQuery(query), classType[0]);
             }
         } catch (SQLException e) {
-            Assertions.fail("Не удалось выполнить SQL запрос");
+            Assertions.fail("Не удалось выполнить SQL запрос", e);
         }
         return null;
     }

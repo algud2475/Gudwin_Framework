@@ -19,5 +19,4 @@ public class BaseDbTest {
                 propsDb.password()
         );
     }
-
 }

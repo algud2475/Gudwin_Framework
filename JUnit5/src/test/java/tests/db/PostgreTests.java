@@ -2,13 +2,10 @@ package tests.db;
 
 import entities.Person;
 import helpers.CustomAssertions;
-import helpers.db.classic.DbClient;
 import helpers.db.classic.ResponseFormat;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-
-import static config.PropsJUnit.propsDb;
 
 public class PostgreTests extends BaseDbTest {
 
@@ -30,6 +27,7 @@ public class PostgreTests extends BaseDbTest {
         String deleteDb = "drop table person;";
 
         dbClient.executeUpdate(createDb);
+        dbClient.executeUpdate(addPerson);
 
         Person person = dbClient.executeQuery(getPerson, ResponseFormat.POJO, Person.class);
         List<Person> persons = dbClient.executeQuery(getPersons, ResponseFormat.LIST_OF_POJO, Person.class);

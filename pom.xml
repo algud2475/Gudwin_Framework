@@ -47,6 +47,7 @@
         <!-- Версия взята из allure-junit-platform-2.29.0.pom для совместимости -->
         <junit-jupiter.version>5.10.3</junit-jupiter.version>
         <postgresql.version>42.7.4</postgresql.version>
+        <amqp-client.rabbitmq.version>5.22.0</amqp-client.rabbitmq.version>
     </properties>
 
     <dependencyManagement>
@@ -118,12 +119,21 @@
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
         </dependency>
+
+        <!-- Предоставляет класс BasicDataSource для работы с БД -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-dbcp2</artifactId>
             <version>2.12.0</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>${amqp-client.rabbitmq.version}</version>
+        </dependency>
+
         <!-- Exclude или dependencyManagement ? -->
     </dependencies>
 

@@ -14,7 +14,6 @@
 
     <properties>
         <testng.version>7.10.2</testng.version>
-        <amqp-client.rabbitmq.version>5.22.0</amqp-client.rabbitmq.version>
         <cucumber.version>7.20.0</cucumber.version>
         <selenium.version>4.25.0</selenium.version>
     </properties>
@@ -29,11 +28,6 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.rabbitmq</groupId>
-            <artifactId>amqp-client</artifactId>
-            <version>${amqp-client.rabbitmq.version}</version>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
