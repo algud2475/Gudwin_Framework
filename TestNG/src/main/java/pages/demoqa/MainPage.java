@@ -8,11 +8,11 @@ import pages.BasePage;
 public class MainPage extends BasePage {
 
     @FindBy(xpath = "//img[@class='banner-image' and @alt='Selenium Online Training']")
-    private WebElement pageLocator;
+    protected WebElement pageLocator;
     @FindBy(xpath = "//h5[contains(text(), 'Alerts')]//ancestor::*[3]")
-    private WebElement buttonAlertsFrameWindows;
+    protected WebElement buttonAlertsFrameWindows;
     @FindBy(xpath = "//h5[contains(text(), 'Elements')]//ancestor::*[3]")
-    private WebElement buttonElements;
+    protected WebElement buttonElements;
 
     @Step("Нажать на кнопку 'Alerts, Frame & Windows'")
     public AlertsFrameWindowsPage clickButtonAlertsFrameWindows() {

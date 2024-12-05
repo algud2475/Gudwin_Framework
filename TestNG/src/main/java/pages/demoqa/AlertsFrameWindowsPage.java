@@ -6,13 +6,13 @@ import pages.BasePage;
 
 public class AlertsFrameWindowsPage extends BasePage {
 
-    private SideBar sideBar = pageManager.getSideBar();
+    protected SideBar sideBar = pageManager.getSideBar();
     @FindBy(xpath = "//span[contains(text(), 'Alerts')]//parent::*")
-    private WebElement buttonAlerts;
+    protected WebElement buttonAlerts;
     @FindBy(xpath = "//span[contains(text(), 'Frames') and not(contains(text(), 'Nested'))]//parent::li")
-    private WebElement buttonFrames;
+    protected WebElement buttonFrames;
     @FindBy(xpath = "//span[contains(text(), 'Browser Windows')]//parent::li")
-    private WebElement buttonBrowserWindows;
+    protected WebElement buttonBrowserWindows;
 
     public SideBar sideBar() {
         return sideBar;

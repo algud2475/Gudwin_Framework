@@ -10,15 +10,15 @@ import pages.BasePage;
 public class AlertsPage extends BasePage {
 
     @FindBy(xpath = "//button[@id='alertButton']")
-    private WebElement buttonAlert;
+    protected WebElement buttonAlert;
     @FindBy(xpath = "//button[@id='confirmButton']")
-    private WebElement buttonConfirm;
+    protected WebElement buttonConfirm;
     @FindBy(xpath = "//button[@id='promtButton']")
-    private WebElement buttonPrompt;
+    protected WebElement buttonPrompt;
     @FindBy(xpath = "//span[@id='confirmResult']")
-    private WebElement labelConfirm;
+    protected WebElement labelConfirm;
     @FindBy(xpath = "//span[@id='promptResult']")
-    private WebElement labelPrompt;
+    protected WebElement labelPrompt;
 
     @Step("Проверка всплывающего окна 'Уведомление от сайта - закрыть'")
     public AlertsPage checkButtonAlert() {

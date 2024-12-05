@@ -2,6 +2,7 @@ package ui.selenium.at1700;
 
 import browser.BrowserActions;
 import io.qameta.allure.Story;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import pages.demoqa.MainPage;
@@ -11,9 +12,11 @@ import utils.JsonUtil;
 
 import java.util.List;
 
+import static config.PropsTestNG.propsTestData;
+
 public class SeleniumTests extends TestSetup {
     private static final String PATH_TO_FILE_WITH_USERS = "src/test/resources/at1700/Users.json";
-    private static final String MAIN_PAGE_URL = "https://demoqa.com"; //вынести в проперти
+    private static final String MAIN_PAGE_URL = propsTestData.mainPageUrl(); //вынести в проперти
 
     @DataProvider(name = "dp")
     public static Object[][] dataProvider() {
@@ -84,6 +87,7 @@ public class SeleniumTests extends TestSetup {
 
     @Test
     public void someTest() {
-        System.out.println("Test");
+        System.out.println(getClass());
+        Assert.fail("Просто без причины");
     }
 }

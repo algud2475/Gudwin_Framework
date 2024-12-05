@@ -16,6 +16,12 @@ import java.util.zip.ZipInputStream;
 public class FilesUtil {
     private final static Logger LOGGER = LoggerFactory.getLogger(FilesUtil.class);
 
+    /**
+     * Возвращает содержимое файла в формате String
+     *
+     * @param path путь к файлу
+     * @return содержимое файла в формате String
+     */
     @Step("Прочитать содержимое файла '{path}'")
     public static String readFileToString(String path) {
         StringBuilder sb = new StringBuilder();
@@ -33,6 +39,15 @@ public class FilesUtil {
         return sb.toString();
     }
 
+    /**
+     * Записывает переданные в метод данные в формате String в файл по указанному пути
+     *
+     * @param path директория, по которой создастся файл
+     * @param name имя файла
+     * @param data данные для записи в файл
+     * @return объект класса File
+     * @throws IOException
+     */
     @Step("Записать данные в файл '{path}/{name}'")
     public static File writeStringToFile(String path, String name, String data) throws IOException {
         File file = new File(path + File.separator + name);
@@ -43,6 +58,12 @@ public class FilesUtil {
         return file;
     }
 
+    /**
+     * Удаляет файл/файлы в папке по указанному пути
+     *
+     * @param folder путь к папке
+     * @param fileName имена файла(ов) в папке, подлежащих удалению
+     */
     @Step("Удалить файл/файлы в папке '{path}'")
     public static void deleteFileOrFilesByNameInFolder(String folder, String ... fileName) {
         for (String file : fileName) {
@@ -54,6 +75,11 @@ public class FilesUtil {
         }
     }
 
+    /**
+     * Удаляет в папке все файлы (кроме вложенных папок) по указанному пути
+     *
+     * @param folder путь к папке
+     */
     @Step("Удалить в папке '{path}' все файлы, кроме папок")
     public static void deleteAllFilesInFolder(String folder) {
         for (File file : new File(folder).listFiles()) {
@@ -61,6 +87,11 @@ public class FilesUtil {
         }
     }
 
+    /**
+     * Удаляет все содержимое в папке по указанному пути
+     *
+     * @param folder путь к папке
+     */
     @Step("Удалить в папке '{path}' все файлы и папки")
     public static void deleteAllInFolder(String folder) {
         for (File file : new File(folder).listFiles()) {
@@ -68,6 +99,13 @@ public class FilesUtil {
         }
     }
 
+    /**
+     * Разархивирует содержимое zip-архива в папку по указанному пути
+     *
+     * @param zip путь к архиву
+     * @param outPath директория, в которую будет произведена разархивация
+     * @return список имен разархивированных файлов (содержимое архива)
+     */
     @Step("Разархивировать архив {zip} в директорию {folder}")
     public static List<String> decompressZipFile(String zip, String outPath) {
         List<String> outFileNames = new ArrayList<>();

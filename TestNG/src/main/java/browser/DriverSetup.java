@@ -8,7 +8,6 @@ import org.openqa.selenium.logging.LoggingPreferences;
 import java.time.Duration;
 import java.util.logging.Level;
 
-import static config.PropsTestNG.propsDb;
 import static config.PropsTestNG.propsWeb;
 
 /**

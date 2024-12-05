@@ -10,6 +10,30 @@ public class DriverUtil {
 
     private DriverUtil() {}
 
+    /*
+    Узнать про вариант работы без использования INSTANCE за пределами класса, т.е.:
+
+    public static WebDriver getDriver() {
+        return getInstance().produceDriver();
+    }
+
+    private static MyChromDriver getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new MyChromDriver();
+        }
+        return INSTANCE;
+    }
+
+    private WebDriver produceDriver() {
+        if (chromeDriver == null) {
+            initChromeDriver();
+        }
+        return chromeDriver;
+    }
+
+     */
+
+
     public static DriverUtil getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new DriverUtil();
@@ -22,6 +46,10 @@ public class DriverUtil {
             driver = new ChromeDriver(DriverSetup.getOptions());
         }
         return driver;
+    }
+
+    public boolean hasWebDriverStarted() {
+        return driver != null;
     }
 
     public void quit() {

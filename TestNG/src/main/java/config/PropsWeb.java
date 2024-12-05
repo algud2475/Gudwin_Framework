@@ -27,7 +27,7 @@ public interface PropsWeb extends Config {
     @Key("page.load.timeout")
     Long pageLoadTimeout();
 
-    @Key("pageTimeout")
+    @Key("page.timeout")
     String pageTimeout();
 
     @Key("script.timeout")

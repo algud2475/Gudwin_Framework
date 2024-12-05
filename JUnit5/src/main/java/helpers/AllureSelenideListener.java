@@ -103,8 +103,8 @@ public class AllureSelenideListener implements LogEventListener {
     private static Optional<byte[]> getScreenshotBytes() {
         try {
             return WebDriverRunner.hasWebDriverStarted() ? Optional.of((byte[])((TakesScreenshot)WebDriverRunner.getWebDriver()).getScreenshotAs(OutputType.BYTES)) : Optional.empty();
-        } catch (WebDriverException var1) {
-            LOGGER.warn("Не удалось получить скриншот", var1);
+        } catch (WebDriverException ex) {
+            LOGGER.warn("Не удалось получить скриншот", ex);
             return Optional.empty();
         }
     }
@@ -112,8 +112,8 @@ public class AllureSelenideListener implements LogEventListener {
     private static Optional<byte[]> getPageSourceBytes() {
         try {
             return WebDriverRunner.hasWebDriverStarted() ? Optional.of(WebDriverRunner.getWebDriver().getPageSource().getBytes(StandardCharsets.UTF_8)) : Optional.empty();
-        } catch (WebDriverException var1) {
-            LOGGER.warn("Не удалось получить HTML-код страницы", var1);
+        } catch (WebDriverException ex) {
+            LOGGER.warn("Не удалось получить HTML-код страницы", ex);
             return Optional.empty();
         }
     }
