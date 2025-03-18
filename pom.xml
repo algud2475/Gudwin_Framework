@@ -47,6 +47,7 @@
         <!-- Версия взята из allure-junit-platform-2.29.0.pom для совместимости -->
         <junit-jupiter.version>5.10.3</junit-jupiter.version>
         <postgresql.version>42.7.4</postgresql.version>
+        <h2.version>2.3.232</h2.version>
         <amqp-client.rabbitmq.version>5.22.0</amqp-client.rabbitmq.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
     </properties>
@@ -106,6 +107,10 @@
             <version>${allure.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-rest-assured</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <version>${awaitility.version}</version>
@@ -119,6 +124,11 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
         </dependency>
 
         <!-- Предоставляет класс BasicDataSource для работы с БД -->

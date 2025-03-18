@@ -1,11 +1,14 @@
 package helpers.db.classic;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Assertions;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.math.BigDecimal;
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,7 +42,7 @@ public class ResultSetProcessor {
         try {
             ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
 
-            for (int i = 1; i <= resultSetMetaData.getColumnCount(); ++i) {
+            for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) { //было ++i, проверить верность
                 mapOfColumns.put(resultSetMetaData.getColumnName(i), new ArrayList<>());
             }
 
@@ -68,6 +71,58 @@ public class ResultSetProcessor {
         return new DbObjectMapper<T>(classType).map(getListOfObjectRows(resultSet));
     }
 
+    public static ArrayNode getJsonArray(ResultSet rs) {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode arrayNode = mapper.createArrayNode();
+
+        try {
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+
+            while (rs.next()) {
+                ObjectNode objectNode = mapper.createObjectNode();
+
+                for (int index = 1; index <= columnCount; index++)
+                {
+                    String column = rsmd.getColumnName(index);
+                    Object value = rs.getObject(column);
+                    if (value == null)
+                    {
+                        objectNode.put(column, "");
+                    } else if (value instanceof Integer) {
+                        objectNode.put(column, (Integer) value);
+                    } else if (value instanceof String) {
+                        objectNode.put(column, (String) value);
+                    } else if (value instanceof Boolean) {
+                        objectNode.put(column, (Boolean) value);
+                    } else if (value instanceof Date) {
+                        objectNode.put(column, ((Date) value).getTime());
+                    } else if (value instanceof Long) {
+                        objectNode.put(column, (Long) value);
+                    } else if (value instanceof Double) {
+                        objectNode.put(column, (Double) value);
+                    } else if (value instanceof Float) {
+                        objectNode.put(column, (Float) value);
+                    } else if (value instanceof BigDecimal) {
+                        objectNode.put(column, (BigDecimal) value);
+                    } else if (value instanceof Byte) {
+                        objectNode.put(column, (Byte) value);
+                    } else if (value instanceof byte[]) {
+                        objectNode.put(column, (byte[]) value);
+                    } else {
+                        throw new IllegalArgumentException("Не удалось привести объект к типу данных: " + value.getClass());
+                    }
+                }
+
+                arrayNode.add(objectNode);
+            }
+        } catch (SQLException ex) {
+            Assertions.fail("Не удалось преобразовать ответ от БД", ex);
+        }
+
+        return arrayNode;
+    }
+
     private static ArrayList<Map<String, Object>> getListOfObjectRows(ResultSet resultSet) {
         ArrayList<Map<String, Object>> listOfRows = new ArrayList<>();
         try {
@@ -76,7 +131,7 @@ public class ResultSetProcessor {
             while (resultSet.next()) {
                 Map<String, Object> row = new HashMap<>();
 
-                for (int i = 1; i <= resultSetMetaData.getColumnCount(); ++i) {
+                for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) { //было ++i, проверить верность
                     row.put(resultSetMetaData.getColumnName(i), resultSet.getObject(i));
                 }
 

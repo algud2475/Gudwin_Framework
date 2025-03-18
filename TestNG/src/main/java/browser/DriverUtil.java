@@ -33,7 +33,6 @@ public class DriverUtil {
 
      */
 
-
     public static DriverUtil getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new DriverUtil();

@@ -14,7 +14,7 @@ public class TestsSetup {
     @BeforeAll
     public static void beforeAllTests() {
         DriverSetup.setup();
-        SelenideLogger.addListener("AllureSelenide", new AllureSelenideListener().screenshotSteps(true));
+        SelenideLogger.addListener("AllureSelenide", AllureSelenideListener.getInstance().screenshotSteps(true));
     }
 
     //должен быть public void

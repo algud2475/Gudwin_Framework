@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.stream.Collectors;
+
+import static helpers.AllureSelenideListener.attachDbRequest;
 
 public class DbClient {
 
@@ -16,6 +19,7 @@ public class DbClient {
     private String URL;
     private String USER;
     private String PASSWORD;
+
 
     public DbClient(String type, String host, String port, String name, String user, String password) {
         DB_TYPE = DbTypes.getType(type);
@@ -38,27 +42,55 @@ public class DbClient {
     public int executeUpdate(String query) {
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement()) {
-            LOGGER.info("Отправка запроса: '{}'", query);
-            return statement.executeUpdate(query);
+            LOGGER.info("Отправка SQL-запроса: '{}'", query);
+            attachDbRequest("Отправка SQL-запроса", query);
+            int response = statement.executeUpdate(query);
+            LOGGER.info("Ответ на SQL-запрос: '{}'", response);
+            attachDbRequest("Ответ на SQL-запрос", String.valueOf(response));
+            return response;
         } catch (SQLException e) {
             Assertions.fail("Не удалось выполнить SQL запрос", e);
         }
         return 0;
     }
 
-    public <T, C> T executeQuery(String query, ResponseFormat responseFormat, Class<C>... classType) {
+    public <T> T executeQuery(String query, ResponseFormat responseFormat) {
+        return executeQuery(query, responseFormat, null);
+    }
+
+    public <T, C> T executeQuery(String query, ResponseFormat responseFormat, Class<C> classType) {
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement()) {
-            LOGGER.info("Отправка запроса: '{}'", query);
+            LOGGER.info("Отправка SQL-запроса: '{}'", query);
+            attachDbRequest("Отправка SQL-запроса", query);
+            ResultSet rs = statement.executeQuery(query);
             switch (responseFormat) {
                 case LIST_OR_ROWS:
-                    return (T) ResultSetProcessor.getListOfStringRows(statement.executeQuery(query));
+                    var listOfRows = ResultSetProcessor.getListOfStringRows(statement.executeQuery(query));
+                    LOGGER.info("Ответ на SQL-запрос: '{}'", String.valueOf(listOfRows));
+                    attachDbRequest("Ответ на SQL-запрос", String.valueOf(listOfRows));
+                    return (T) listOfRows;
                 case MAP_OF_COLUMNS:
-                    return (T) ResultSetProcessor.getMapOfColumns(statement.executeQuery(query));
+                    var mapOfColumns = ResultSetProcessor.getMapOfColumns(statement.executeQuery(query));
+                    LOGGER.info("Ответ на SQL-запрос: '{}'", String.valueOf(mapOfColumns));
+                    attachDbRequest("Ответ на SQL-запрос", String.valueOf(mapOfColumns));
+                    return (T) mapOfColumns;
                 case POJO:
-                    return (T) ResultSetProcessor.getObject(statement.executeQuery(query), classType[0]);
+                    var pojo = ResultSetProcessor.getObject(statement.executeQuery(query), classType);
+                    LOGGER.info("Ответ на SQL-запрос: '{}'", String.valueOf(pojo));
+                    attachDbRequest("Ответ на SQL-запрос", String.valueOf(pojo));
+                    return (T) pojo;
                 case LIST_OF_POJO:
-                    return (T) ResultSetProcessor.getListObjects(statement.executeQuery(query), classType[0]);
+                    var listOfPojo = ResultSetProcessor.getListObjects(statement.executeQuery(query), classType);
+                    String listString = listOfPojo.stream().map(Object::toString).collect(Collectors.joining(", "));
+                    LOGGER.info("Ответ на SQL-запрос: '{}'", listString);
+                    attachDbRequest("Ответ на SQL-запрос", listString);
+                    return (T) listOfPojo;
+                case JSON_ARRAY:
+                    var jsonArray = ResultSetProcessor.getJsonArray(statement.executeQuery(query));
+                    LOGGER.info("Ответ на SQL-запрос: '{}'", jsonArray);
+                    attachDbRequest("Ответ на SQL-запрос", jsonArray);
+                    return (T) jsonArray;
             }
         } catch (SQLException e) {
             Assertions.fail("Не удалось выполнить SQL запрос", e);
@@ -75,6 +107,7 @@ public class DbClient {
         } catch (SQLException e) {
             LOGGER.info("В БД отсутствует таблица с именем '{}'", tableName);
         }
+        LOGGER.info("В БД присутствует таблица с именем '{}'", tableName);
         return ans;
     }
 }

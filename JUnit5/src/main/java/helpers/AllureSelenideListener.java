@@ -5,19 +5,27 @@ import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.LogEvent;
 import com.codeborne.selenide.logevents.LogEventListener;
 import com.codeborne.selenide.logevents.SelenideLog;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.qameta.allure.Allure;
 import io.qameta.allure.AllureLifecycle;
 import io.qameta.allure.model.Status;
 import io.qameta.allure.model.StatusDetails;
 import io.qameta.allure.model.StepResult;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.qameta.allure.selenide.LogType;
 import io.qameta.allure.util.ResultsUtils;
+import io.restassured.RestAssured;
+import io.restassured.filter.log.LogDetail;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Level;
@@ -33,24 +41,42 @@ public class AllureSelenideListener implements LogEventListener {
     private boolean saveScreenshots;
     private Boolean screenshotSteps = propsWeb.screenshotSteps();
     private boolean savePageHtml;
+    private boolean saveApiRequests;
+    private ByteArrayOutputStream apiRequest = new ByteArrayOutputStream();
+    private ByteArrayOutputStream apiResponse = new ByteArrayOutputStream();
+    private PrintStream apiRequestVar = new PrintStream(apiRequest, true);
+    private PrintStream apiResponseVar = new PrintStream(apiResponse, true);
+    private boolean saveDbRequests;
     private boolean includeSelenideLocatorsSteps;
+    private Optional<byte[]> stepBuffer;
     private final Map<LogType, Level> logTypesToSave;
     private final AllureLifecycle lifecycle;
+    private static AllureSelenideListener INSTANCE = null;
 
-    public AllureSelenideListener() {
+    public static AllureSelenideListener getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new AllureSelenideListener();
+        }
+        return INSTANCE;
+    }
+
+    private AllureSelenideListener() {
         this(Allure.getLifecycle());
     }
 
-    public AllureSelenideListener(AllureLifecycle lifecycle) {
+    private AllureSelenideListener(AllureLifecycle lifecycle) {
         this.saveScreenshots = true;
         this.savePageHtml = true;
         this.includeSelenideLocatorsSteps = true;
+        saveApiRequests(true);
+        this.saveDbRequests = true;
         this.logTypesToSave = new HashMap();
         this.lifecycle = lifecycle;
     }
 
     /**
      * Вкл/выкл прикрепление к Allure-отчету скриншотов на каждом шагу
+     *
      * @param screenshotSteps true, если требуется включить прикрепление
      * @return текущий экземпляр обработчика событий
      */
@@ -61,6 +87,7 @@ public class AllureSelenideListener implements LogEventListener {
 
     /**
      * Вкл/выкл прикрепление к Allure-отчету скриншотов
+     *
      * @param saveScreenshots true, если требуется включить прикрепление
      * @return текущий экземпляр обработчика событий
      */
@@ -71,11 +98,39 @@ public class AllureSelenideListener implements LogEventListener {
 
     /**
      * Вкл/выкл прикрепление к Allure-отчету HTML-код страниц
+     *
      * @param savePageHtml true, если требуется включить прикрепление
      * @return текущий экземпляр обработчика событий
      */
     public AllureSelenideListener savePageSource(boolean savePageHtml) {
         this.savePageHtml = savePageHtml;
+        return this;
+    }
+
+    /**
+     * Вкл/выкл прикрепление к Allure-отчету API-запросов и ответов
+     *
+     * @param saveApiRequests true, если требуется включить прикрепление
+     * @return текущий экземпляр обработчика событий
+     */
+    public AllureSelenideListener saveApiRequests(boolean saveApiRequests) {
+        this.saveApiRequests = saveApiRequests;
+        RestAssured.filters(new ResponseLoggingFilter(LogDetail.ALL, apiResponseVar),
+                new RequestLoggingFilter(LogDetail.ALL, apiRequestVar));
+        //RestAssured.filters(new AllureRestAssured()
+        //        .setRequestAttachmentName("Отправка API-запроса: " + Thread.currentThread().getStackTrace()[3].getMethodName())
+        //        .setResponseAttachmentName("Ответ на API-запрос: " + Thread.currentThread().getStackTrace()[2].getMethodName()));
+        return this;
+    }
+
+    /**
+     * Вкл/выкл прикрепление к Allure-отчету запросы к БД и результаты выполнения
+     *
+     * @param saveDbRequests true, если требуется включить прикрепление
+     * @return текущий экземпляр обработчика событий
+     */
+    public AllureSelenideListener saveDbRequests(boolean saveDbRequests) {
+        this.saveDbRequests = saveDbRequests;
         return this;
     }
 
@@ -102,7 +157,7 @@ public class AllureSelenideListener implements LogEventListener {
 
     private static Optional<byte[]> getScreenshotBytes() {
         try {
-            return WebDriverRunner.hasWebDriverStarted() ? Optional.of((byte[])((TakesScreenshot)WebDriverRunner.getWebDriver()).getScreenshotAs(OutputType.BYTES)) : Optional.empty();
+            return WebDriverRunner.hasWebDriverStarted() ? Optional.of((byte[]) ((TakesScreenshot) WebDriverRunner.getWebDriver()).getScreenshotAs(OutputType.BYTES)) : Optional.empty();
         } catch (WebDriverException ex) {
             LOGGER.warn("Не удалось получить скриншот", ex);
             return Optional.empty();
@@ -122,6 +177,31 @@ public class AllureSelenideListener implements LogEventListener {
         return String.join("\n\n", Selenide.getWebDriverLogs(logType.toString(), level));
     }
 
+    public void attachApiRequest() {
+        if (getInstance().saveApiRequests) {
+            customAttachment("Отправка API-запроса", "txt", convertApiLog(getInstance().apiRequest));
+            customAttachment("Ответ на API-запрос", "txt", convertApiLog(getInstance().apiResponse));
+        }
+    }
+
+    private static byte[] convertApiLog(ByteArrayOutputStream log) {
+        byte[] array = log.toByteArray();
+        log.reset();
+        return array;
+    }
+
+    public static void attachDbRequest(String name, String content) {
+        if (getInstance().saveDbRequests) {
+            customAttachment(name, "txt", content.getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    public static void attachDbRequest(String name, ArrayNode content) {
+        if (getInstance().saveDbRequests) {
+            customAttachment(name, "txt", String.valueOf(content).getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
     @Override
     public void beforeEvent(LogEvent event) {
         if (this.stepsShouldBeLogged(event)) {
@@ -135,6 +215,7 @@ public class AllureSelenideListener implements LogEventListener {
 
     @Override
     public void afterEvent(LogEvent event) {
+        LOGGER.info("%%%%%%%%% ПРОВЕРКА, ЧТО LOG EVENT AFTER %%%%%%%%%");
         if (event.getStatus().equals(LogEvent.EventStatus.FAIL)) {
             this.lifecycle.getCurrentTestCaseOrStep().ifPresent((parentUuid) -> {
                 if (this.saveScreenshots) {
@@ -155,7 +236,6 @@ public class AllureSelenideListener implements LogEventListener {
                         this.lifecycle.addAttachment("Логи: " + String.valueOf(logType), "application/json", ".txt", content);
                     });
                 }
-
             });
         }
 
@@ -175,7 +255,7 @@ public class AllureSelenideListener implements LogEventListener {
                     case FAIL:
                         this.lifecycle.updateStep((stepResult) -> {
                             stepResult.setStatus((Status) ResultsUtils.getStatus(event.getError()).orElse(Status.BROKEN));
-                            stepResult.setStatusDetails((StatusDetails)ResultsUtils.getStatusDetails(event.getError()).orElse(new StatusDetails()));
+                            stepResult.setStatusDetails((StatusDetails) ResultsUtils.getStatusDetails(event.getError()).orElse(new StatusDetails()));
                         });
                         break;
                     default:
@@ -186,6 +266,10 @@ public class AllureSelenideListener implements LogEventListener {
             });
         }
 
+    }
+
+    private static void customAttachment(String name, String fileExtension, byte[] body) {
+        getInstance().lifecycle.addAttachment(name, null, fileExtension, body);
     }
 
     private boolean stepsShouldBeLogged(LogEvent event) {

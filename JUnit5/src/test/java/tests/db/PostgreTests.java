@@ -1,7 +1,9 @@
 package tests.db;
 
+import entities.Food;
 import entities.Person;
 import helpers.CustomAssertions;
+import helpers.db.classic.DbClient;
 import helpers.db.classic.ResponseFormat;
 import org.junit.jupiter.api.Test;
 
@@ -37,5 +39,22 @@ public class PostgreTests extends BaseDbTest {
                 "Полученный из таблицы пользователь с id=1 отличается от первого в списке");
 
         dbClient.executeUpdate(deleteDb);
+    }
+
+    @Test
+    void someTest() {
+        this.dbClient = new DbClient(
+                "H2",
+                "localhost",
+                "9092",
+                "testdb",
+                "user",
+                "pass"
+        );
+
+        dbClient.checkDBTableExist("FOOD");
+        List<Food> listFood = dbClient.executeQuery("SELECT * FROM FOOD;", ResponseFormat.LIST_OF_POJO, Food.class);
+        Food food = dbClient.executeQuery("SELECT * FROM FOOD;", ResponseFormat.POJO, Food.class);
+        //ArrayNode arrayNode = dbClient.executeQuery("SELECT * FROM FOOD;", ResponseFormat.JSON_ARRAY);
     }
 }

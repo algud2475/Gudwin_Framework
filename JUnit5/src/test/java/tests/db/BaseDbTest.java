@@ -8,7 +8,7 @@ import static config.PropsJUnit.propsDb;
 public class BaseDbTest {
     protected DbClient dbClient;
 
-    @BeforeEach
+    //@BeforeEach
     public void beforeEach() {
         this.dbClient = new DbClient(
                 propsDb.type(),

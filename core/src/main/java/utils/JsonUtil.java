@@ -1,9 +1,7 @@
 package utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,26 +11,29 @@ public class JsonUtil {
     private final static Logger LOGGER = LoggerFactory.getLogger(JsonUtil.class);
 
     /**
-     *
      * @param classType - класс возвращаемого объекта
-     * @param data - JSON-строка формата String
-     * @param path - путь к объекту, если он не находится в корне
-     * @return объект класса classType
+     * @param data      - JSON-строка формата String
+     * @param path      - путь к объекту, если он не находится в корне
      * @param <T>
+     * @return объект класса classType
      */
-    public static <T> T getObject(Class<T> classType, String data, String... path) {
+    public static <T> T getObject(String data, String path, Class<T> classType) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            if (path.length == 0 && !path[0].equals("")) {
+            if (path == null) {
                 return objectMapper.readValue(data, classType);
             } else {
-                String dataOut = objectMapper.readValue(data, JsonNode.class).path(path[0]).toString();
+                String dataOut = objectMapper.readValue(data, JsonNode.class).path(path).toString();
                 return objectMapper.readValue(dataOut, classType);
             }
         } catch (JsonProcessingException e) {
             LOGGER.error(e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    public static <T> T getObject(String data, Class<T> classType) {
+        return getObject(data, null, classType);
     }
 
     public static <T> List<T> getListObjects(String data, Class<T> classType) {

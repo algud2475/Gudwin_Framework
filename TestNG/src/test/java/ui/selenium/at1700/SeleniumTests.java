@@ -16,7 +16,7 @@ import static config.PropsTestNG.propsTestData;
 
 public class SeleniumTests extends TestSetup {
     private static final String PATH_TO_FILE_WITH_USERS = "src/test/resources/at1700/Users.json";
-    private static final String MAIN_PAGE_URL = propsTestData.mainPageUrl(); //вынести в проперти
+    private static final String MAIN_PAGE_URL = propsTestData.mainPageUrl();
 
     @DataProvider(name = "dp")
     public static Object[][] dataProvider() {
